@@ -39,31 +39,24 @@ public class StatefulIds implements Ids
         int dest_port = tcp.destination();
         int source_port = tcp.source();
         String payload = packet.getUTF8String(tcp.getPayloadOffset(), tcp.getPayloadLength());
-
-        // Figure out if this packet is to the host or from the host
         String source_ip = org.jnetpcap.packet.format.FormatUtils.ip(ip.source());
         String dest_ip = org.jnetpcap.packet.format.FormatUtils.ip(ip.destination());
 
-        // Check whether we were expecting a message to the host or from the host
-        boolean success;
+        // Figure out if this message is supposed to be to the host or from the host
         String entry_ip;
+        boolean append;
         if (source_ip.equals(policy.host_ip))
         {
             entry_ip = dest_ip;
-            success = check_from_host(policy, dest_port, dest_ip, source_port);
+            append = check_from_host(policy, dest_port, dest_ip, source_port);
         }
         else
         {
             entry_ip = source_ip;
-            success = check_to_host(policy, dest_port, source_ip, source_port);
+            append = check_to_host(policy, dest_port, source_ip, source_port);
         }
 
-        if (!success)
-        {
-            return;
-        }
-
-        // Find the connection entry
+        // Get the message for this entry
         String message = connections.getOrDefault(entry_ip, null);
 
         // If this is a new connection
@@ -76,7 +69,7 @@ public class StatefulIds implements Ids
             }
 
             // Add a new entry
-            connections.put(entry_ip, payload);
+            connections.put(entry_ip, "");
             return;
         }
         // If this is a closing connection
@@ -101,8 +94,11 @@ public class StatefulIds implements Ids
 
         // Add the payload to the message, and keep going
         assert(message != null);
-        message += payload;
-        connections.put(entry_ip, message);
+        if (append)
+        {
+            message += payload;
+            connections.put(entry_ip, message);
+        }
     }
 
     private boolean check_to_host(

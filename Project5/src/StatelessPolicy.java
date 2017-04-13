@@ -24,12 +24,12 @@ public class StatelessPolicy extends Policy
         public SubPolicy()
         {
             type = null;
-            pattern = null;
+            regex = null;
             flags = 0;
         }
 
         public SubPolicyType type;
-        public Pattern pattern;
+        public Pattern regex;
         public Integer flags;
     }
 

@@ -78,16 +78,14 @@ public class StatelessIds implements Ids
         }
 
         // Figure out if the payload matches
-        Matcher matcher = policy.sub_policies.get(sub_policy_index).pattern.matcher(payload);
+        Matcher matcher = policy.sub_policies.get(sub_policy_index).regex.matcher(payload);
         if (!matcher.find())
         {
-            System.out.println(payload);
             sub_policy_index = 0;
             return;
         }
 
         // If this is the last policy, we've found an intrusion
-        System.out.println(payload);
         sub_policy_index += 1;
         if (sub_policy_index == policy.sub_policies.size())
         {
@@ -141,7 +139,7 @@ public class StatelessIds implements Ids
             return false;
         }
 
-        // Check if the desination IP matches the policy
+        // Check if the destination IP matches the policy
         if (policy.attacker_ip != null && !policy.attacker_ip.equals(dest_ip))
         {
             return false;
