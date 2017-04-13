@@ -259,6 +259,7 @@ public class Driver
         }
         catch (Exception e)
         {
+            System.out.println("An error occurred while parsing the config file. Aborting...");
             return;
         }
 
