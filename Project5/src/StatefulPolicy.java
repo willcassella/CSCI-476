@@ -1,3 +1,5 @@
+import java.util.regex.Pattern;
+
 /**
  * Created by Will on 4/9/2017.
  */
@@ -7,5 +9,5 @@ public class StatefulPolicy extends Policy
     public Integer attacker_port;
     public String attacker_ip;
     public SubPolicyType type;
-    public String regex;
+    public Pattern regex;
 }
