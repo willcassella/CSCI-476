@@ -93,8 +93,7 @@ public class StatefulIds implements Ids
         }
 
         // Add the payload to the message, and keep going
-        assert(message != null);
-        if (append)
+        if (message != null && append)
         {
             message += payload;
             connections.put(entry_ip, message);
