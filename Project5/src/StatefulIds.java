@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
  */
 public class StatefulIds implements Ids
 {
+    private boolean triggered = false;
     private final StatefulPolicy policy;
     private final Ip4 ip = new Ip4();
     private final Tcp tcp = new Tcp();
@@ -44,15 +45,18 @@ public class StatefulIds implements Ids
 
         // Figure out if this message is supposed to be to the host or from the host
         String entry_ip;
+        int entry_port;
         boolean append;
         if (source_ip.equals(policy.host_ip))
         {
             entry_ip = dest_ip;
+            entry_port = source_port;
             append = check_from_host(policy, dest_port, dest_ip, source_port);
         }
         else
         {
             entry_ip = source_ip;
+            entry_port = dest_port;
             append = check_to_host(policy, dest_port, source_ip, source_port);
         }
 
@@ -85,7 +89,8 @@ public class StatefulIds implements Ids
             Matcher matcher = policy.regex.matcher(message);
             if (matcher.find())
             {
-                System.out.println("Intrusion detected!");
+                triggered = true;
+                System.out.println("Policy '" + policy.name + "' violated by connection to " + entry_ip + " on port " + entry_port + "!");
             }
 
             connections.remove(entry_ip);
@@ -97,6 +102,15 @@ public class StatefulIds implements Ids
         {
             message += payload;
             connections.put(entry_ip, message);
+        }
+    }
+
+    @Override
+    public void finished()
+    {
+        if (!triggered)
+        {
+            System.out.println("Policy '" + policy.name + "' found no violations.");
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.regex.Matcher;
 
 public class StatelessIds implements Ids
 {
+    private boolean triggered = false;
     private final StatelessPolicy policy;
     private final Ip4 ip = new Ip4();
     private final Tcp tcp = new Tcp();
@@ -62,13 +63,19 @@ public class StatelessIds implements Ids
         String source_ip = org.jnetpcap.packet.format.FormatUtils.ip(ip.source());
         String dest_ip = org.jnetpcap.packet.format.FormatUtils.ip(ip.destination());
 
+        String entry_ip;
+        int entry_port;
         boolean success;
         if (source_ip.equals(policy.host_ip))
         {
+            entry_ip = dest_ip;
+            entry_port = source_port;
             success = check_from_host(policy, dest_port, dest_ip, source_port);
         }
         else
         {
+            entry_ip = source_ip;
+            entry_port = dest_port;
             success = check_to_host(policy, dest_port, source_ip, source_port);
         }
 
@@ -90,7 +97,17 @@ public class StatelessIds implements Ids
         if (sub_policy_index == policy.sub_policies.size())
         {
             sub_policy_index = 0;
-            System.out.println("Intrusion detected!");
+            triggered = true;
+            System.out.println("Policy '" + policy.name + "' violated by connection to " + entry_ip + " on port " + entry_port + "!");
+        }
+    }
+
+    @Override
+    public void finished()
+    {
+        if (!triggered)
+        {
+            System.out.println("Policy '" + policy.name + "' found no violations.");
         }
     }
 

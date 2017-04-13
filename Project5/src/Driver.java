@@ -277,6 +277,12 @@ public class Driver
         // Check policies
         pcap.loop(Pcap.LOOP_INFINITE, new PacketIterator(), ids_array);
 
+        // Run 'finished' callback
+        for (Ids ids : ids_array)
+        {
+            ids.finished();
+        }
+
         // Close the file
         pcap.close();
     }

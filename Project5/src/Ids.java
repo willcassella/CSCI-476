@@ -7,4 +7,6 @@ import org.jnetpcap.packet.JPacket;
 public interface Ids
 {
     void handlePacket(JPacket packet);
+
+    void finished();
 }
